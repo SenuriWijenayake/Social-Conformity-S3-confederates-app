@@ -34,6 +34,7 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
   $scope.question = {};
   $scope.onbeforeunloadEnabled = true;
   $scope.qCount = 1;
+  $scope.question = {};
 
   //Confirmation message before reload and back
   $window.onbeforeunload = function(e) {
@@ -90,6 +91,17 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
       $scope.scrollAdjust();
       $("#chat-text").focus();
     }, 1000);
+  });
+
+  socket.on('feedback', (response) => {
+    var res = JSON.parse(response.info);
+
+    $scope.question = res.question;
+    if($scope.cues == 'Yes'){
+      $scope.avatarFeedback(res.feedback);
+    } else{
+      $scope.createControlFeedback(res.feedback);
+    }
   });
 
 
