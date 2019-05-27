@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Online Quiz</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
+
+  <script type="text/javascript" src="./js/app.js"></script>
+  <script type="text/javascript" src="./js/chat.js"></script>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="./css/styles.css">
+</head>
+
+<body>
+  <div ng-app="app" ng-controller="QuizController">
+    <div class="row">
+      <div class="col-sm-6" id="question-area" style="display:none;">
+        <form class="form-styles">
+          <div id="qBox" style="text-align: center; padding:15px;">
+
+            <div class="row">
+              <p class="question-text"> <span> Q{{currentQIndex}}. </span>{{question.questionText}}</p>
+              <div id="image-container" style="margin-bottom: 15px;">
+                <img ng-if='question.img' src="{{question.img}}" style="width:220px; height:125px;">
+              </div>
+            </div>
+
+            <div class="row" ng-repeat="answer in question.answers">
+              <div class="col-sm-4">
+                <input id="{{answer.id}}" type="radio" value="{{answer.id}}" name="answerOptions" ng-model="myAnswer.answerId" class="answer-radio-button" ng-click="clicked()" required />
+              </div>
+              <div class="col-sm-8 answer-label" class="answer-label">
+                <label for="{{answer.id}}" class="radio-text">{{answer.answer}}</label>
+              </div>
+            </div>
+
+            <div id="confidence-container">
+              <div>
+                <p class="confidence-text">How confident are you of the selected answer?
+                  <br>Move the slider to denote a value <b>AND</b> provide your explanation.</p>
+              </div>
+
+              <div class="slidecontainer" style="width:510px;">
+                <input type="range" ng-model="myAnswer.confidence" min="0" max="100" value="50" step="1" id="rangeInput" oninput="output.value = rangeInput.value" class="slider">
+              </div>
+              <div class="outputcontainer">
+                <output id="output" for="rangeInput">Not Selected</output>
+              </div>
+              <div class="explanation-container">
+                <form>
+                  <textarea class="explanation-box" ng-model="myAnswer.explanation" placeholder="Why do you think this answer is the correct one? Enter your explanation here..">
+                    Enter your explanation here..
+                  </textarea>
+                  <div style="margin-top:20px;" class="button">
+                    <button id="submit-button" style="display:none;" class="submit-button" ng-click="(count == 0) ? submitAnswer() : update()">Submit</button>
+                    <!-- <input id="submit-button" style="display:none;" class="submit-button" type="submit" ng-click="(count == 0) ? submitAnswer() : update()" /> -->
+                  </div>
+                </form>
+              </div>
+            </div>
+
+
+
+          </div>
+        </form>
+      </div>
+
+      <div class="col-sm-6 chartdiv" id="chart-area">
+        <div id="chart_div" style="display:none;margin-left: 10%;margin-top:3%;">
+          <div style="font-weight:bold;margin-bottom:2%;">Results of the group to this question (your answer is highlighted)..</div>
+          <div class="row control-option-row" ng-repeat="option in controlFeedback | orderBy : 'order'" ng-class="{'my-answer': (option.order == 1)}">
+            <div class="col-sm-2 option-box"> <img src="./assets/icons/{{option.avatar}}" width="45"></div>
+            <div class="col-sm-10 feedback-explanation-box">
+              <div class="col-sm-12" style="padding: 3px;font-size: 23px;">{{option.answer}}</div>
+              <!-- <div class="col-sm-12 explanation-area"><b>Explanation : </b>{{option.explanation}}</div> -->
+            </div>
+          </div>
+          <div id="change-section-ncnd" style="margin-bottom: 50px;padding: 20px;margin-top: 20px;border: solid red;display:none;">
+            <div class="row">
+              <div id="descr" class="col-sm-12">
+                <p class="change-text">Would you like to make changes to your answer, confidence or explanation?</p>
+              </div>
+
+              <div class="col-sm-6">
+                <input type="button" value="Yes" class="yes-button" ng-click="yes()" />
+              </div>
+              <div class="col-sm-6">
+                <input type="button" value="No, next question" class="no-button" ng-click="next()" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="loader" style="display: none;" class="loader"></div>
+        <div id="loader-text" style="display: none;" class="loader-text">Getting answers of other participants.. Please wait.</div>
+      </div>
+
+      <div class="col-sm-6 avatardiv" id="avatar-area">
+        <div id="avatar_div" style="display:none;margin-left: 10%;margin-top:2.5%;">
+          <div style="font-weight:bold;margin-bottom:1.5%;">Results of the group to this question (your answer is highlighted)..</div>
+          <div class="row control-option-row" ng-repeat="option in feedback | orderBy : 'order'" ng-style="" ng-class="{'my-answer': (option.order == 1)}">
+            <div class="col-sm-2 option-box">
+              <img src="./assets/{{option.avatar}}" class="avatar-image">
+              <div class="username" ng-if="(option.order == 1)">{{currentUsername}}</div>
+              <div class="username" ng-if="(option.order != 1)">{{option.username}}</div>
+            </div>
+            <div class="col-sm-10 feedback-explanation-box">
+              <div class="col-sm-12" style="padding: 3px;font-size: 23px;">{{option.answer}}</div>
+              <!-- <div class="col-sm-12 explanation-area"><b>Explanation : </b>{{option.explanation}}</div> -->
+            </div>
+          </div>
+          <div class="row">
+            <div id="change-section-cnd" style="margin-bottom: 50px;padding: 20px;margin-top: 20px;border: solid red;display:none;">
+              <div class="row">
+                <div id="descr" class="col-sm-12">
+                  <p class="change-text">Would you like to make changes to your answer, confidence or explanation?</p>
+                </div>
+
+                <div class="col-sm-6">
+                  <input type="button" value="Yes" class="yes-button" ng-click="yes()" />
+                </div>
+                <div class="col-sm-6">
+                  <input type="button" value="No, next question" class="no-button" ng-click="next()" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="loader" style="display: none;" class="loader"></div>
+        <div id="loader-text" style="display: none;" class="loader-text">Getting answers of other participants.. Please wait.</div>
+      </div>
+
+      <div class="row">
+        <div id="change-section" class="col-sm-12" style="display:none;" ng-class="{'change-area-no-discuss': (discussion == 'No'), 'change-area-discuss' : (discussion == 'Yes')}">
+          <div id="descr">
+            <p class="change-text">Would you like to make changes to your answer, confidence or explanation?</p>
+          </div>
+          <div class="col-sm-6">
+            <input type="button" value="Yes" class="yes-button" ng-click="yes()" />
+          </div>
+          <div class="col-sm-6">
+            <input type="button" value="No, next question" class="no-button" ng-click="next()" />
+          </div>
+        </div>
+      </div>
+
+      <div class="chatarea col-sm-6" id="chat-area" ng-show="discussion == 'Yes'">
+        <div class="minimize">
+        </div>
+        <div class="textarea" id="text-area">
+          <div ng-repeat="line in history" class="chat-messages" ng-class="{'last-line':$last}">
+            <b ng-if='line.name'> {{line.name}} : </b> {{line.msg}}
+          </div>
+        </div>
+        <div class="inputarea">
+          <input type="text" ng-model="message" id="chat-text" placeholder="Type your message here.." class="text-box">
+          <button id="sendButton" ng-click="sendMessage()" class="send-button">Send</button>
+        </div>
+      </div>
+    </div>
+</body>
+
+</html>
