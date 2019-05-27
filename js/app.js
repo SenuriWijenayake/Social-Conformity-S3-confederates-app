@@ -17,7 +17,6 @@ app.controller('HomeController', function($scope, $window, $timeout) {
       $window.sessionStorage.setItem('cues', user.cues);
       $window.sessionStorage.setItem('gender', user.gender);
       $window.sessionStorage.setItem('username', user.username);
-      $window.sessionStorage.setItem('age', user.age);
 
       $timeout(function() {
           $window.location.href = './chat.html';
