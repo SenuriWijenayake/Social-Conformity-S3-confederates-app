@@ -5,10 +5,8 @@ var api = 'http://localhost:5000';
 app.controller('HomeController', function($scope, $window, $timeout) {
 
   $scope.user = {};
-  $scope.user.discussion = 'Yes';
 
   $scope.login = function(user) {
-    console.log(user);
     if (user.cues && user.gender && user.username) {
 
       $("#index-submit-button").attr('disabled', true);
@@ -28,70 +26,13 @@ app.controller('HomeController', function($scope, $window, $timeout) {
 
 app.controller('QuizController', function($scope, $http, $window, $timeout) {
 
-  $scope.currentQIndex = 0;
-
-  $scope.userId = $window.sessionStorage.getItem('userId');
+  $scope.discussion = 'Yes';
   $scope.cues = $window.sessionStorage.getItem('cues');
-  $scope.discussion = $window.sessionStorage.getItem('discussion');
-  $scope.currentUsername = $window.sessionStorage.getItem('username');
-  $scope.order = JSON.parse($window.sessionStorage.getItem('order'));
+  $scope.gender = $window.sessionStorage.getItem('gender');
+  $scope.username = $window.sessionStorage.getItem('username');
 
   $scope.question = {};
-  $scope.sliderChanged = false;
-  $scope.explained = false;
   $scope.onbeforeunloadEnabled = true;
-  $scope.count = 0;
-
-  $("input[type='range']").change(function() {
-    $scope.sliderChanged = true;
-    $("#output").css("color", "green");
-    $("#confidence-container").css("border", "none");
-    if ($scope.explained) {
-      $("#submit-button").css("display", "block");
-      $(".explanation-box").css("border-color", "grey");
-    } else {
-      $(".explanation-box").css("border", "2px solid red");
-      $(".explanation-box").focus();
-    }
-  });
-
-  $('.explanation-box').keyup(function() {
-    if ($scope.myAnswer.explanation != "") {
-      $scope.explained = true;
-      $(".explanation-box").css("border-color", "grey");
-    }
-    if ($scope.sliderChanged && $scope.myAnswer.explanation != "") {
-      $scope.explained = true;
-      $("#submit-button").css("display", "block");
-      $(".explanation-box").css("border-color", "grey");
-    }
-  });
-
-  //Setting question one
-  $http({
-    method: 'POST',
-    url: api + '/question',
-    data: {
-      id: $scope.order[$scope.currentQIndex]
-    },
-    type: JSON,
-  }).then(function(response) {
-    $scope.currentQIndex += 1;
-    $scope.question = response.data;
-    if ($scope.question.img) {
-      $("#image-container").css("display", "inline");
-    } else {
-      $("#image-container").css("display", "none");
-    }
-
-    if($scope.discussion == 'No'){
-      $("#question-area").css("display", "inline");
-      $("#qBox").css("border", "solid red");
-    }
-
-  }, function(error) {
-    console.log("Error occured when getting the first question");
-  });
 
   //Confirmation message before reload and back
   $window.onbeforeunload = function(e) {
@@ -107,70 +48,50 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
     }
   };
 
-  //Initialization
-  $scope.count = 0;
-  $scope.myAnswer = {};
-  $scope.myAnswer.confidence = 50;
-  $scope.myAnswer.userId = $scope.userId;
-  $scope.myAnswer.cues = $scope.cues;
-  $scope.myAnswer.discussion = $scope.discussion;
+  //Connecting the client to the socket
+  $scope.userState = 'ready';
+  $scope.history = [];
+  var socket = io.connect('http://localhost:5000');
+  socket.emit('new_connection', {
+    'username': $scope.username
+  });
 
-  //Show only when the answer is selected
-  $scope.clicked = function() {
-    if (!$scope.explained) {
-      $(".explanation-box").focus();
-    }
-    //Resetting the red line
-    if ($scope.question.questionNumber < 0) {
-      $("#qBox").css("border", "none");
-      $("#confidence-container").css("display", "block");
-      if (!$scope.sliderChanged) {
-        $("#confidence-container").css("border", "solid red");
-      }
-    } else {
-      $("#confidence-container").css("display", "block");
-    }
-  };
+  //Sending the initial messages
+  $timeout(function() {
+    $scope.history.push({
+      name: "QuizBot",
+      msg: "Hello " + $scope.username + "! Welcome to the quiz."
+    });
+  }, 1000);
 
-  $scope.submitAnswer = function() {
-    if ($scope.sliderChanged && $scope.myAnswer.explanation != "") {
-      //Remove the button
-      $("#submit-button").css("display", "none");
-      $(".explanation-box").css("border", "2px solid grey");
-      //Disbling the input
-      $("input[type=radio]").attr('disabled', true);
-      $("input[type=range]").attr('disabled', true);
-      $(".explanation-box").attr('disabled', true);
-      //Loader activated
-      $("#loader").css("display", "block");
-      $("#loader-text").css("display", "block");
+  $timeout(function() {
+    $scope.history.push({
+      name: "QuizBot",
+      msg: "You will be given prompts"});
+  }, 2000);
 
-      $scope.myAnswer.answerId = parseInt($scope.myAnswer.answerId);
-      $scope.myAnswer.questionId = $scope.question.questionNumber;
-      $scope.myAnswer.userId = $scope.userId;
-      $scope.myAnswer.cues = $scope.cues;
-      $scope.myAnswer.discussion = $scope.discussion;
+  socket.on('new_message', (data) => {
+    $scope.history.push({
+      name: data.username,
+      msg: data.message
+    });
+    $timeout(function() {
+      $scope.scrollAdjust();
+    }, 500);
+  });
 
-      $http({
-        method: 'POST',
-        url: api + '/feedback',
-        data: $scope.myAnswer,
-        type: JSON,
-      }).then(function(response) {
-        $scope.myAnswer.answerId = $scope.myAnswer.answerId.toString();
-        $timeout(function() {
-          if ($scope.myAnswer.cues != "Yes") {
-            $scope.createControlFeedback(response.data);
-          } else {
-            $scope.avatarFeedback(response.data);
-          }
-        }, 3000);
+  socket.on('connected', (data) => {
+    $scope.history.push({
+      name: data.username,
+      msg: data.message
+    });
+    $timeout(function() {
+      $scope.scrollAdjust();
+      $("#chat-text").focus();
+    }, 1000);
+  });
 
-      }, function(error) {
-        console.log("Error occured when loading the chart");
-      });
-    }
-  };
+
 
   $scope.avatarFeedback = function(data) {
     $scope.feedback = data;
@@ -214,72 +135,6 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
       $timeout(function() {
         $("#change-section").css("display", "block");
       }, 2000);
-    }
-  };
-
-  $scope.yes = function() {
-
-    $scope.count = 1;
-
-    $("#submit-button").css("display", "none");
-    $("#change-section").css("border", "none");
-
-    //Make the input enabled
-    $("input[type=radio]").attr('disabled', false);
-    $("input[type=range]").attr('disabled', false);
-    $(".explanation-box").attr('disabled', false);
-
-    //Remove change section buttons
-    if ($scope.cues == 'No' && $scope.discussion == 'No') {
-      $("#change-section-ncnd").css("display", "none");
-    } else if ($scope.cues == 'Yes' && $scope.discussion == 'No') {
-      $("#change-section-cnd").css("display", "none");
-    } else {
-      $("#change-section").css("display", "none");
-    }
-
-    //Set the confidence to 50
-    $scope.myAnswer.confidence = 50;
-    $scope.sliderChanged = false;
-    $scope.explained = false;
-
-    $(".explanation-box").val("");
-    $("#output").val("Not Specified");
-    $("#output").css("color", "red");
-  };
-
-  $scope.update = function() {
-
-    if ($scope.sliderChanged && $scope.explained) {
-
-      //Remove the question area and chart area
-      $("#question-area").css("display", "none");
-      $("#chart-area").css("display", "none");
-      $("#avatar-area").css("display", "none");
-
-      $("#change-section-ncnd").css("display", "none");
-      $("#change-section-cnd").css("display", "none");
-      $("#change-section").css("display", "none");
-
-      //Disable the button
-      $("#submit-button").attr("disabled", "disabled");
-      $("#confidence-container").css("display", "none");
-
-      $scope.myAnswer.answerId = parseInt($scope.myAnswer.answerId);
-      $scope.myAnswer.explanation = $scope.myAnswer.explanation;
-      $scope.myAnswer.questionId = $scope.question.questionNumber;
-      $scope.myAnswer.userId = $scope.userId;
-
-      $http({
-        method: 'POST',
-        url: api + '/updateAnswer',
-        data: $scope.myAnswer,
-        type: JSON,
-      }).then(function(response) {
-        $scope.next();
-      }, function(error) {
-        console.log("Error occured when updating the answers");
-      });
     }
   };
 
@@ -385,49 +240,8 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
     element.scrollTop = element.scrollHeight;
   };
 
-  //Connecting the client to the socket
-  $scope.userState = 'ready';
-  $scope.history = [];
-  var socket = io.connect('http://localhost:5000');
-  socket.emit('new_connection', {
-    'username': $scope.currentUsername
-  });
 
-  //Sending the initial messages
-  $timeout(function() {
-    $scope.history.push({
-      name: "QuizBot",
-      msg: "Hello " + $scope.currentUsername + "! Welcome to the quiz. You will be asked to answer 18 multilple-choice questions in this quiz, with four other participants."
-    });
-  }, 1000);
 
-  $timeout(function() {
-    $scope.history.push({
-      name: "QuizBot",
-      msg: "You will first answer each question individually. Next, you will see group answers. Then you may discuss the group's answers through this chat. Subsequent to the group discussion, you can make changes to your answer, confidence level or explanation." +
-      " If the instructions are clear, type GO to start the quiz!"});
-  }, 2000);
-
-  socket.on('new_message', (data) => {
-    $scope.history.push({
-      name: data.username,
-      msg: data.message
-    });
-    $timeout(function() {
-      $scope.scrollAdjust();
-    }, 500);
-  });
-
-  socket.on('connected', (data) => {
-    $scope.history.push({
-      name: data.username,
-      msg: data.message
-    });
-    $timeout(function() {
-      $scope.scrollAdjust();
-      $("#chat-text").focus();
-    }, 1000);
-  });
 
   $scope.go = function() {
 
