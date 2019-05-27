@@ -33,6 +33,7 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
 
   $scope.question = {};
   $scope.onbeforeunloadEnabled = true;
+  $scope.qCount = 1;
 
   //Confirmation message before reload and back
   $window.onbeforeunload = function(e) {
@@ -138,127 +139,11 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
     }
   };
 
-  $scope.next = function() {
-    //Remove the question area and chart area
-    $("#question-area").css("display", "none");
-    $("#chart-area").css("display", "none");
-    $("#avatar-area").css("display", "none");
-
-    $("#change-section").css("display", "none");
-    $("#change-section-ncnd").css("display", "none");
-    $("#change-section-cnd").css("display", "none");
-
-    $scope.count = 0;
-
-    //Make the input enabled and submit invisible
-    $("input[type=radio]").attr('disabled', false);
-    $("input[type=range]").attr('disabled', false);
-    $(".explanation-box").attr('disabled', false);
-
-    $("#submit-button").css("display", "none");
-    $("#confidence-container").css("display", "none");
-    $("#change-section").css("border", "none");
-
-    //Handling the ending of the quiz and directing to the big five questionnaire
-    if ($scope.currentQIndex == 17) {
-      //Disable the confirmation message
-      $scope.onbeforeunloadEnabled = false;
-      //Save chat messages to the database
-      var data = {
-        userId: $scope.userId,
-        chats: JSON.parse(angular.toJson($scope.history))
-      };
-
-      $http({
-        method: 'POST',
-        url: api + '/saveChats',
-        data: data,
-        type: JSON,
-      }).then(function(response) {
-          console.log("Chat messages saved successfully.");
-          $window.location.href = './big-five.html';
-        },
-        function(error) {
-          console.log("Error occured when saving the chat messages.");
-        });
-    } else {
-      $scope.userId = $window.sessionStorage.getItem('userId');
-      var data = {
-        id: $scope.order[$scope.currentQIndex]
-      };
-
-      $http({
-        method: 'POST',
-        url: api + '/question',
-        data: data,
-        type: JSON,
-      }).then(function(response) {
-
-        //Display the new question area and chart area
-        $("#question-area").css("display", "block");
-        $("#chart-area").css("display", "block");
-        $("#avatar-area").css("display", "block");
-        // $("#change-section").css("display", "block");
-
-        $scope.myAnswer = {};
-        $scope.sliderChanged = false;
-        $scope.explained = false;
-        $scope.myAnswer.confidence = 50;
-        $(".explanation-box").val("");
-        $scope.question = response.data;
-
-        if ($scope.question.img) {
-          $("#image-container").css("display", "inline");
-        } else {
-          $("#image-container").css("display", "none");
-        }
-
-        $("#loader").css("display", "none");
-        $("#loader-text").css("display", "none");
-        $("#chart_div").css("display", "none");
-        $("#avatar_div").css("display", "none");
-
-        $("#change-section").css("display", "none");
-        $("#change-section-ncnd").css("display", "none");
-        $("#change-section-cnd").css("display", "none");
-
-        $("#submit-button").prop("disabled", false);
-        $("#output").val("Not Specified");
-        $("#output").css("color", "red");
-
-        $scope.currentQIndex += 1;
-
-      }, function(error) {
-        console.log("Error occured when loading the question");
-      });
-    }
-  };
-
   //Function to adjust scrolling - not working
   $scope.scrollAdjust = function() {
     var element = document.getElementById("text-area");
     element.scrollTop = element.scrollHeight;
   };
-
-
-
-
-  $scope.go = function() {
-
-    $("#question-area").css("display", "inline");
-    $("#qBox").css("border", "solid red");
-
-    $scope.history.push({
-      name: "QuizBot",
-      msg: "You just started the quiz!"
-    });
-
-    $scope.userState = "started"; //Started the quiz
-    $timeout(function() {
-      $scope.scrollAdjust();
-    }, 500);
-  };
-
 
   //Call sendMessage on Enter
   var chatBox = document.getElementById("chat-text");
