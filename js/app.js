@@ -64,18 +64,27 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
   $timeout(function() {
     $scope.history.push({
       name: "QuizBot",
-      msg: "Hello " + $scope.username + "! Welcome to the quiz."
+      msg: "Hello " + $scope.username + "! Welcome to the quiz. I am the QuizBot. I will show you the feedback the real participant sees during the quiz, on the left hand side. Based on the answer assigned to you, you may chose your explanation from the script provided."
     });
-  }, 1000);
-
-  $timeout(function() {
-    $scope.history.push({
-      name: "QuizBot",
-      msg: "You will be given prompts"});
   }, 2000);
 
   //Send a new message to the group chat. Visible to all
   socket.on('new_message', (data) => {
+    $scope.history.push({
+      name: data.username,
+      msg: data.message
+    });
+    $timeout(function() {
+      $scope.scrollAdjust();
+    }, 500);
+  });
+
+  //When you get the start signal
+  socket.on('ready', (data) => {
+    $("#chat-text").attr("disabled", false);
+    $(".send-button").css("background-color", "#117A65");
+    $(".send-button").css("border", "1px solid #117A65");
+
     $scope.history.push({
       name: data.username,
       msg: data.message
@@ -99,6 +108,7 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
 
   //Receive notification as to when the user starts the quiz
   socket.on('user_started', (data) => {
+
     $scope.history.push({
       name: data.username,
       msg: data.message
@@ -110,6 +120,30 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
     $scope.question = data.question;
     $scope.qOnly = true;
     $scope.currentUser = data.currentUser;
+    $("#qBox").css("display", "block");
+
+    //Loader activated
+    $("#loader").css("display", "block");
+    $("#loader-text").css("display", "block");
+
+  });
+
+  //Receive questions
+  socket.on('new_question', (res) => {
+    $("#avatar_div").css("display", "none");
+    $("#chart_div").css("display", "none");
+
+    $scope.history.push({
+      name: res.username,
+      msg: res.message
+    });
+    $timeout(function() {
+      $scope.scrollAdjust();
+    }, 500);
+
+    $scope.question = res.question;
+    $scope.qOnly = true;
+    // $scope.currentUser = data.currentUser;
     $("#qBox").css("display", "block");
 
     //Loader activated
@@ -192,23 +226,22 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
 
   $scope.sendMessage = function() {
     if ($scope.message != undefined && $scope.message.trim().length != 0) {
+
       //Handle requests
       var handle = $scope.message.toLowerCase();
-      if (handle == 'go') {
-        if ($scope.userState == "ready") {
-          $scope.history.push({
-            name: $scope.username,
-            msg: $scope.message
-          });
-          $scope.go();
+      if (handle == "done"){
+        socket.emit('new_message', {
+          'username': $scope.currentUsername,
+          'message': $scope.message
+        });
 
-        } else {
+        $timeout(function() {
           $scope.history.push({
             name: "QuizBot",
-            msg: "You have already started the quiz."
+            msg: "You may change your answer, confidence or explanation now."
           });
-        }
-        $scope.message = "";
+        }, 2000);
+
       } else {
         socket.emit('new_message', {
           'username': $scope.username,

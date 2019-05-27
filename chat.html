@@ -41,8 +41,8 @@
         </div>
 
         <div class="col-sm-12 chartdiv" id="chart-area">
-          <div id="chart_div" style="display:none;margin-left: 10%;margin-top:3%;">
-            <div style="font-weight:bold;margin-bottom:2%;">Results of the group to this question (your answer is highlighted)..</div>
+          <div id="chart_div" style="display:none;margin-left: 10%;margin-top:2%;">
+            <div style="font-weight:bold;margin-bottom:2%;">Results of the group to this question (Participant's answer is highlighted. You are identified as {{username}})..</div>
             <div class="row control-option-row" ng-repeat="option in controlFeedback | orderBy : 'order'" ng-class="{'my-answer': (option.order == 1)}">
               <div class="col-sm-2 option-box"> <img src="./assets/icons/{{option.avatar}}" width="45"></div>
               <div class="col-sm-10 feedback-explanation-box">
@@ -70,7 +70,7 @@
         </div>
 
         <div class="col-sm-12 avatardiv" id="avatar-area">
-          <div id="avatar_div" style="display:none;margin-left: 10%;margin-top:2.5%;">
+          <div id="avatar_div" style="display:none;margin-left: 10%;margin-top:2%;">
             <div style="font-weight:bold;margin-bottom:1.5%;">Results of the group to this question (your answer is highlighted)..</div>
             <div class="row control-option-row" ng-repeat="option in feedback | orderBy : 'order'" ng-style="" ng-class="{'my-answer': (option.order == 1)}">
               <div class="col-sm-2 option-box">
