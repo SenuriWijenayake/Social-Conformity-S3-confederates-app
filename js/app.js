@@ -2,77 +2,28 @@ var app = angular.module('app', []);
 //var api = 'https://stark-sands-60128.herokuapp.com';
 var api = 'http://localhost:5000';
 
-app.controller('BigFiveController', function($scope, $http, $window) {
-  $http({
-    method: 'GET',
-    url: api + '/bigFiveQuestions'
-  }).then(function(response) {
-    $scope.questions = response.data;
-    document.getElementById('userId').value = $window.sessionStorage.getItem('userId');
-  }, function(error) {
-    console.log("Error occured when loading the big five questions");
-  });
+app.controller('HomeController', function($scope, $window, $timeout) {
 
-});
-
-app.controller('HomeController', function($scope, $http, $window, $timeout) {
   $scope.user = {};
+  $scope.user.discussion = 'Yes';
 
-  $('#gender-specified').change(function() {
-    if (this.checked) {
-      $('#gender-text').prop('required', true);
-    } else {
-      $('#gender-text').prop('required', false);
-    }
-  });
-
-  $scope.indexNext = function(user) {
-    if (user.cues && user.discussion && user.gender && user.age && user.education && user.field && (user.gender == 'specified' ? user.genderSpecified : true) && (user.cues == 'Yes' ? user.name : true) && (user.age >= 18)) {
-      $("#index-next").attr('disabled', true);
-      $("#index-next").css('background-color', 'grey');
-      $("#index-instructions").css("display", "block");
-
-      $timeout(function() {
-        $("#connection-pending").css("display", "block");
-      }, 1500);
-
-      $timeout(function() {
-        $("#connection-pending").css("display", "none");
-        $("#connection-success").css("display", "block");
-        $("#submit-section").css("display", "block");
-      }, 8500);
-
-    }
-  }
-
-  $scope.submitDetails = function(user) {
-    if (user.cues && user.discussion && user.gender && user.age && user.education && user.field && (user.gender == 'specified' ? user.genderSpecified : true) && (user.cues == 'Yes' ? user.name : true) && (user.age >= 18)) {
+  $scope.login = function(user) {
+    console.log(user);
+    if (user.cues && user.gender && user.username) {
 
       $("#index-submit-button").attr('disabled', true);
       $("#index-loader").css("display", "block");
 
-      if (!user.name) {
-        user.name = "User C";
-      }
+      $window.sessionStorage.setItem('cues', user.cues);
+      $window.sessionStorage.setItem('gender', user.gender);
+      $window.sessionStorage.setItem('username', user.username);
+      $window.sessionStorage.setItem('age', user.age);
 
-      $http({
-        method: 'POST',
-        url: api + '/user',
-        data: user,
-        type: JSON,
-      }).then(function(response) {
-        $window.sessionStorage.setItem('userId', response.data.id);
-        $window.sessionStorage.setItem('cues', user.cues);
-        $window.sessionStorage.setItem('discussion', user.discussion);
-        $window.sessionStorage.setItem('username', user.name);
-        $window.sessionStorage.setItem('order', JSON.stringify(response.data.order));
-        $window.location.href = './quiz.html';
+      $timeout(function() {
+          $window.location.href = './chat.html';
+      }, 2000);
 
-      }, function(error) {
-        console.log("Error occured when submitting user details");
-      });
     }
-
   };
 });
 

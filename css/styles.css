@@ -1,3 +1,70 @@
+/*Index Page*/
+.index-container {
+  text-align: center;
+  border-radius: 10px;
+  padding: 25px;
+  margin-left: 20%;
+  width: 60%;
+  margin-top: 7%;
+  background: aliceblue;
+  border: solid #117A65;
+}
+
+.index-main-container {
+  background-color: #F8F9F9;
+}
+
+.question-container {
+  /* width: 64%; */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.padding-adjust-labels {
+  padding-top: 10px;
+}
+
+.padding-adjust-radio {
+  padding-top: 10px;
+}
+
+.input-text {
+  float: left;
+  width: 75%;
+}
+
+.radio-button {
+  float: left;
+}
+
+.index-next {
+  float: right;
+  width: 40%;
+  height: 43px;
+  background-color: #117A65;
+  font-size: 19px;
+  color: white;
+  border: 1px solid #117A65;
+  border-radius: 5px;
+}
+
+.right {
+  text-align: right;
+}
+
+.gender-label {
+  float: left;
+  margin-left: 10px;
+  font-weight: normal;
+}
+
+/* End of Index page */
+
+/* Chat Page */
+
+
+/* End of Chat Page */
+
 .chat-messages{
   padding: 3px;
   background-color: #E5E7E9;
@@ -143,16 +210,7 @@ input[type=radio]+label>img {
   width: 42%;
 }
 
-.index-next {
-  float: right;
-  width: 40%;
-  height: 43px;
-  background-color: #117A65;
-  font-size: 19px;
-  color: white;
-  border: 1px solid #117A65;
-  border-radius: 5px;
-}
+
 
 .instruction {
   margin-top: 20px;
@@ -164,7 +222,12 @@ input[type=radio]+label>img {
 .index-container {
   text-align: center;
   border-radius: 10px;
-  padding: 15px;
+  padding: 25px;
+  margin-left: 20%;
+  width: 60%;
+  margin-top: 7%;
+  background: aliceblue;
+  border: solid #117A65;
 }
 
 .welcome-text {
@@ -201,11 +264,7 @@ input[type=radio]+label>img {
   width: 95px;
 }
 
-.question-container {
-  /* width: 64%; */
-  margin-left: auto;
-  margin-right: auto;
-}
+
 
 .shaded-tr {
   background-color: #f2f2f2;
@@ -225,19 +284,8 @@ input[type=radio]+label>img {
   float: right;
 }
 
-.right {
-  text-align: right;
-}
 
-.radio-button {
-  float: left;
-}
 
-.gender-label {
-  float: left;
-  margin-left: 10px;
-  font-weight: normal;
-}
 
 .submit-details {
   height: 35px;
@@ -249,9 +297,7 @@ input[type=radio]+label>img {
   margin-right: auto;
 }
 
-.index-main-container {
-  background-color: #F8F9F9;
-}
+
 
 .connecting-text {
   font-size: 20px;
@@ -274,13 +320,7 @@ input[type=radio]+label>img {
   border-radius: 5px;
 }
 
-.padding-adjust-labels {
-  padding-top: 10px;
-}
 
-.padding-adjust-radio {
-  padding-top: 10px;
-}
 
 /*Quiz Page*/
 .answer-radio-button {
@@ -379,10 +419,7 @@ input[type=radio]+label>img {
   font-weight: normal;
 }
 
-.input-text {
-  float: left;
-  width: 75%;
-}
+
 
 .confidence-text {
   padding: 20px;
