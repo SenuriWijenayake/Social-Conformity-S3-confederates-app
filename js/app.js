@@ -35,6 +35,8 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
   $scope.onbeforeunloadEnabled = true;
   $scope.qCount = 1;
   $scope.question = {};
+  $scope.qOnly = false;
+  $scope.currentUser = "";
 
   //Confirmation message before reload and back
   $window.onbeforeunload = function(e) {
@@ -72,6 +74,7 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
       msg: "You will be given prompts"});
   }, 2000);
 
+  //Send a new message to the group chat. Visible to all
   socket.on('new_message', (data) => {
     $scope.history.push({
       name: data.username,
@@ -82,6 +85,7 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
     }, 500);
   });
 
+  //Send a message to say that you have connected
   socket.on('connected', (data) => {
     $scope.history.push({
       name: data.username,
@@ -93,8 +97,32 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
     }, 1000);
   });
 
+  //Receive notification as to when the user starts the quiz
+  socket.on('user_started', (data) => {
+    $scope.history.push({
+      name: data.username,
+      msg: data.message
+    });
+    $timeout(function() {
+      $scope.scrollAdjust();
+    }, 500);
+
+    $scope.question = data.question;
+    $scope.qOnly = true;
+    $scope.currentUser = data.currentUser;
+    $("#qBox").css("display", "block");
+
+    //Loader activated
+    $("#loader").css("display", "block");
+    $("#loader-text").css("display", "block");
+
+  });
+
   socket.on('feedback', (response) => {
     var res = JSON.parse(response.info);
+    //Loader deactivated
+    $("#loader").css("display", "none");
+    $("#loader-text").css("display", "none");
 
     $scope.question = res.question;
     if($scope.cues == 'Yes'){
@@ -104,13 +132,8 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
     }
   });
 
-
-
   $scope.avatarFeedback = function(data) {
     $scope.feedback = data;
-    $("#loader").css("display", "none");
-    $("#loader-text").css("display", "none");
-
     $("#avatar_div").css("display", "block");
 
     if ($scope.cues == 'No' && $scope.discussion == 'No') {
@@ -131,9 +154,6 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
 
   $scope.createControlFeedback = function(feedback) {
     $scope.controlFeedback = feedback;
-    $("#loader").css("display", "none");
-    $("#loader-text").css("display", "none");
-
     $("#chart_div").css("display", "block");
 
     if ($scope.cues == 'No' && $scope.discussion == 'No') {
@@ -177,7 +197,7 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
       if (handle == 'go') {
         if ($scope.userState == "ready") {
           $scope.history.push({
-            name: $scope.currentUsername,
+            name: $scope.username,
             msg: $scope.message
           });
           $scope.go();
@@ -191,7 +211,7 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
         $scope.message = "";
       } else {
         socket.emit('new_message', {
-          'username': $scope.currentUsername,
+          'username': $scope.username,
           'message': $scope.message
         });
       }

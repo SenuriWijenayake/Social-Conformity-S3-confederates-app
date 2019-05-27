@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>Online Quiz</title>
+  <title>Online Quiz - Confederates</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -22,8 +22,7 @@
   <div ng-app="app" ng-controller="QuizController">
     <div class="row">
       <div class="col-sm-6" id="question-area">
-        <div id="qBox" style="text-align: center; padding:15px;">
-
+        <div id="qBox" style="text-align: center; padding:15px; display:none;" ng-class="{'green-border' : qOnly}">
           <div class="row col-sm-12">
             <p class="question-text"> <span> Q{{qCount}}. </span>{{question.questionText}}</p>
             <div id="image-container" style="margin-bottom: 15px;">
@@ -31,6 +30,14 @@
             </div>
           </div>
 
+          <div class="row" ng-repeat="answer in question.answers" ng-show="qOnly">
+            <div class="col-sm-4">
+              <input type="radio" value="{{answer.id}}" name="answerOptions" class="answer-radio-button" disabled/>
+            </div>
+            <div class="col-sm-8 answer-label" class="answer-label">
+              <label for="{{answer.id}}" class="radio-text">{{answer.answer}}</label>
+            </div>
+          </div>
         </div>
 
         <div class="col-sm-12 chartdiv" id="chart-area">
@@ -68,7 +75,7 @@
             <div class="row control-option-row" ng-repeat="option in feedback | orderBy : 'order'" ng-style="" ng-class="{'my-answer': (option.order == 1)}">
               <div class="col-sm-2 option-box">
                 <img src="./assets/{{option.avatar}}" class="avatar-image">
-                <div class="username" ng-if="(option.order == 1)">{{currentUsername}}</div>
+                <div class="username" ng-if="(option.order == 1)">{{currentUser}}</div>
                 <div class="username" ng-if="(option.order != 1)">{{option.username}}</div>
               </div>
               <div class="col-sm-10 feedback-explanation-box">
@@ -93,6 +100,11 @@
               </div>
             </div>
           </div>
+          <div id="loader" style="display: none;" class="loader"></div>
+          <div id="loader-text" style="display: none;" class="loader-text">Getting answers of other participants.. Please wait.</div>
+        </div>
+
+        <div class="col-sm-12">
           <div id="loader" style="display: none;" class="loader"></div>
           <div id="loader-text" style="display: none;" class="loader-text">Getting answers of other participants.. Please wait.</div>
         </div>

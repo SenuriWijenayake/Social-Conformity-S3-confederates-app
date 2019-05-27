@@ -114,6 +114,10 @@
   padding: 3px;
 }
 
+.green-border{
+  border: solid green;
+}
+
 /* End of Chat Page */
 
 .chat-messages{
