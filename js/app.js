@@ -72,7 +72,8 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
   socket.on('new_message', (data) => {
     $scope.history.push({
       name: data.username,
-      msg: data.message
+      msg: data.message,
+      avatar: data.avatar
     });
     $timeout(function() {
       $scope.scrollAdjust();
@@ -97,8 +98,8 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
   //Send a message to say that you have connected
   socket.on('connected', (data) => {
     $scope.history.push({
-      name: data.username,
-      msg: data.message
+      msg: data.message,
+      class: data.class
     });
     $timeout(function() {
       $scope.scrollAdjust();
