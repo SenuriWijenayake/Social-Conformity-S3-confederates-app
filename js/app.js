@@ -17,7 +17,7 @@ app.controller('HomeController', function($scope, $window, $timeout) {
       $window.sessionStorage.setItem('username', user.username);
 
       $timeout(function() {
-          $window.location.href = './chat.html';
+        $window.location.href = './chat.html';
       }, 2000);
 
     }
@@ -37,6 +37,32 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
   $scope.question = {};
   $scope.qOnly = false;
   $scope.currentUser = "";
+  $scope.myAvatar = "c.png";
+
+  $(function() {
+    if ($scope.cues == 'Yes') {
+      if ($scope.gender == 'female') {
+        $scope.myAvatar = 'female.png';
+      } else {
+        $scope.myAvatar = 'male.png';
+      }
+    } else {
+      switch ($scope.username) {
+        case 'User A':
+          $scope.myAvatar = 'a.png'
+          break;
+        case 'User B':
+          $scope.myAvatar = 'b.png'
+          break;
+        case 'User C':
+          $scope.myAvatar = 'd.png'
+          break;
+        case 'User D':
+          $scope.myAvatar = 'e.png'
+          break;
+      }
+    }
+  });
 
   //Confirmation message before reload and back
   $window.onbeforeunload = function(e) {
@@ -45,7 +71,7 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
       e.returnValue = dialogText;
 
       //Disconnect sockets if there are any
-      if($scope.discussion){
+      if ($scope.discussion) {
         socket.disconnect();
       }
       return dialogText;
@@ -64,6 +90,7 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
   $timeout(function() {
     $scope.history.push({
       name: "QuizBot",
+      avatar: "qb.png",
       msg: "Hello " + $scope.username + "! Welcome to the quiz. I am the QuizBot. I will show you the feedback the real participant sees during the quiz, on the left hand side. Based on the answer assigned to you, you may chose your explanation from the script provided."
     });
   }, 2000);
@@ -73,7 +100,8 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
     $scope.history.push({
       name: data.username,
       msg: data.message,
-      avatar: data.avatar
+      avatar: data.avatar,
+      class: data.class
     });
     $timeout(function() {
       $scope.scrollAdjust();
@@ -88,7 +116,8 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
 
     $scope.history.push({
       name: data.username,
-      msg: data.message
+      msg: data.message,
+      avatar: data.avatar
     });
     $timeout(function() {
       $scope.scrollAdjust();
@@ -99,7 +128,7 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
   socket.on('connected', (data) => {
     $scope.history.push({
       msg: data.message,
-      class: data.class
+      class: data.class,
     });
     $timeout(function() {
       $scope.scrollAdjust();
@@ -109,10 +138,10 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
 
   //Receive notification as to when the user starts the quiz
   socket.on('user_started', (data) => {
-
     $scope.history.push({
       name: data.username,
-      msg: data.message
+      msg: data.message,
+      avatar : data.avatar
     });
     $timeout(function() {
       $scope.scrollAdjust();
@@ -160,9 +189,9 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
     $("#loader-text").css("display", "none");
 
     $scope.question = res.question;
-    if($scope.cues == 'Yes'){
+    if ($scope.cues == 'Yes') {
       $scope.avatarFeedback(res.feedback);
-    } else{
+    } else {
       $scope.createControlFeedback(res.feedback);
     }
   });
@@ -230,23 +259,26 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
 
       //Handle requests
       var handle = $scope.message.toLowerCase();
-      if (handle == "done"){
+      if (handle == "done") {
         socket.emit('new_message', {
           'username': $scope.currentUsername,
-          'message': $scope.message
+          'message': $scope.message,
+          'avatar' : $scope.myAvatar
         });
 
         $timeout(function() {
           $scope.history.push({
             name: "QuizBot",
-            msg: "You may change your answer, confidence or explanation now."
+            msg: "You may change your answer, confidence or explanation now.",
+            avatar: "qb.png",
           });
         }, 2000);
 
       } else {
         socket.emit('new_message', {
           'username': $scope.username,
-          'message': $scope.message
+          'message': $scope.message,
+          'avatar' : $scope.myAvatar
         });
       }
 
