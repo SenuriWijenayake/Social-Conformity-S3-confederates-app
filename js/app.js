@@ -165,7 +165,8 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
 
     $scope.history.push({
       name: res.username,
-      msg: res.message
+      msg: res.message,
+      avatar : res.avatar
     });
     $timeout(function() {
       $scope.scrollAdjust();

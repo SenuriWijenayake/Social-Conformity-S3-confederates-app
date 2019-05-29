@@ -42,7 +42,7 @@
 
         <div class="col-sm-12 chartdiv" id="chart-area">
           <div id="chart_div" style="display:none;margin-left: 10%;margin-top:2%;">
-            <div style="font-weight:bold;margin-bottom:2%;">Results of the group to this question (Participant's answer is highlighted. You are identified as {{username}})..</div>
+            <div style="font-weight:bold;margin-bottom:2%;">Results of the group to this question (Participant's answer is highlighted. You are identified as <span style="color:green;">{{username}})..</span></div>
             <div class="row control-option-row" ng-repeat="option in controlFeedback | orderBy : 'order'" ng-class="{'my-answer': (option.order == 1)}">
               <div class="col-sm-2 option-box"> <img src="./assets/icons/{{option.avatar}}" width="45"></div>
               <div class="col-sm-10 feedback-explanation-box">
@@ -66,7 +66,7 @@
             </div>
           </div>
           <div id="loader" style="display: none;" class="loader"></div>
-          <div id="loader-text" style="display: none;" class="loader-text">Getting answers of other participants.. Please wait.</div>
+          <div id="loader-text" style="display: none;" class="loader-text">Waiting until the participant answers the question.. Please wait.</div>
         </div>
 
         <div class="col-sm-12 avatardiv" id="avatar-area">
@@ -119,7 +119,7 @@
         <div class="textarea" id="text-area">
           <div ng-repeat="line in history" class="chat-messages" ng-class="{'last-line':$last, 'joined' : {{line.class == 'joined'}}, 'status' : {{line.class == 'status'}}}">
             <div class="row">
-              <div class="col-sm-1" style="margin-left: 27px;padding-right: 0px;padding-left: 0px;text-align:center;">
+              <div class="col-sm-1" style="margin-left: 20px;padding-right: 0px;padding-left: 0px;text-align:center;">
                 <img src="./assets/icons/{{line.avatar}}" width="40">
                 <b style="font-size: smaller;" ng-if='line.name'> {{line.name}}</b>
               </div>
