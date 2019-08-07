@@ -126,8 +126,8 @@
             <div class="row">
               <div class="col-sm-1" style="margin-left:20px;padding-right:0px;padding-left:0px;text-align:center;">
                 <img src="./assets/icons/new/{{line.avatar}}" width="40" ng-show='line.name == "QuizBot"'>
-                <img src="./assets/icons/new/{{line.avatar}}" width="45" ng-show='line.name != "QuizBot" && cues == "letter"' style="margin-top:7px;">
-                <img src="{{line.avatar}}" width="45" ng-show='line.realUser && cues == "letter"' style="margin-top:7px;">
+                <img src="./assets/icons/new/{{line.avatar}}" width="45" ng-show='line.realUser != true && line.name != "QuizBot" && cues == "letter"' style="margin-top:7px;">
+                <img src="{{line.avatar}}" width="45" ng-show='line.realUser == true && cues == "letter"' style="margin-top:7px;">
                 <img src="./assets/icons/new/neutral.png" width="45" ng-show='line.name != "QuizBot" && cues == "avatar" && line.class != "joined"' style="margin-top:7px;">
                 <b style="font-size: smaller;" ng-if='line.name && line.name == "QuizBot"'> {{line.name}}</b>
               </div>

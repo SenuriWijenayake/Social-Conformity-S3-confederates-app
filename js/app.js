@@ -94,7 +94,8 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
       name: data.username,
       msg: data.message,
       avatar: data.avatar,
-      class: data.class
+      class: data.class,
+      realUser: data.realUser
     });
     $timeout(function() {
       $scope.scrollAdjust();
