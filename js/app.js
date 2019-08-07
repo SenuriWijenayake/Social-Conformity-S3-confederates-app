@@ -90,16 +90,18 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
 
   //Send a new message to the group chat. Visible to all
   socket.on('new_message', (data) => {
-    $scope.history.push({
-      name: data.username,
-      msg: data.message,
-      avatar: data.avatar,
-      class: data.class,
-      realUser: data.realUser
-    });
+    $timeout(function() {
+      $scope.history.push({
+        name: data.username,
+        msg: data.message,
+        avatar: data.avatar,
+        class: data.class,
+        realUser: data.realUser
+      });
+    }, 500);
     $timeout(function() {
       $scope.scrollAdjust();
-    }, 500);
+    }, 1000);
   });
 
   //When you get the start signal
@@ -157,14 +159,17 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
     $("#avatar_div").css("display", "none");
     $("#chart_div").css("display", "none");
 
-    $scope.history.push({
-      name: res.username,
-      msg: res.message,
-      avatar : res.avatar
-    });
+    $timeout(function() {
+      $scope.history.push({
+        name: res.username,
+        msg: res.message,
+        avatar : res.avatar
+      });
+    }, 1000);
+
     $timeout(function() {
       $scope.scrollAdjust();
-    }, 500);
+    }, 1500);
 
     $scope.question = res.question;
     $scope.qOnly = true;
@@ -184,7 +189,7 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
     $("#loader-text").css("display", "none");
 
     $scope.question = res.question;
-    if ($scope.cues == 'Yes') {
+    if ($scope.cues == 'avatar') {
       $scope.avatarFeedback(res.feedback);
     } else {
       $scope.createControlFeedback(res.feedback);
