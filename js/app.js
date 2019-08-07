@@ -7,13 +7,12 @@ app.controller('HomeController', function($scope, $window, $timeout) {
   $scope.user = {};
 
   $scope.login = function(user) {
-    if (user.cues && user.gender && user.username) {
+    if (user.cues && user.username) {
 
       $("#index-submit-button").attr('disabled', true);
       $("#index-loader").css("display", "block");
 
       $window.sessionStorage.setItem('cues', user.cues);
-      $window.sessionStorage.setItem('gender', user.gender);
       $window.sessionStorage.setItem('username', user.username);
 
       $timeout(function() {
@@ -28,7 +27,6 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
 
   $scope.discussion = 'Yes';
   $scope.cues = $window.sessionStorage.getItem('cues');
-  $scope.gender = $window.sessionStorage.getItem('gender');
   $scope.username = $window.sessionStorage.getItem('username');
 
   $scope.question = {};
@@ -37,27 +35,22 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
   $scope.question = {};
   $scope.qOnly = false;
   $scope.currentUser = "";
-  $scope.myAvatar = "c.png";
 
   $(function() {
-    if ($scope.cues == 'Yes') {
-      if ($scope.gender == 'female') {
-        $scope.myAvatar = 'female.png';
-      } else {
-        $scope.myAvatar = 'male.png';
-      }
+    if ($scope.cues == 'avatar') {
+      $scope.myAvatar = 'neutral.png'
     } else {
       switch ($scope.username) {
-        case 'User A':
+        case 'JG':
           $scope.myAvatar = 'a.png'
           break;
-        case 'User B':
+        case 'NB':
           $scope.myAvatar = 'b.png'
           break;
-        case 'User C':
+        case 'DH':
           $scope.myAvatar = 'd.png'
           break;
-        case 'User D':
+        case 'BS':
           $scope.myAvatar = 'e.png'
           break;
       }

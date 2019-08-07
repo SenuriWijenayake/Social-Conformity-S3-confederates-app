@@ -35,8 +35,8 @@
                 <td class="col-sm-6" style="padding-top: 10px;">
                   <select required ng-model="user.cues" class="input-text">
                     <option value="">None</option>
-                    <option value="Yes">Yes</option>
-                    <option value="No">No</option>
+                    <option value="avatar">Avatar</option>
+                    <option value="letter">Initials</option>
                   </select>
                 </td>
               </tr>
@@ -53,28 +53,10 @@
               </tr> -->
 
               <!--For cues condition-->
-              <tr class="row">
-                <td class="col-sm-6 right padding-adjust-labels" style="padding-top:25px;"> Your username: <span style="color:red;">*</span></td>
-                <td class="col-sm-6" style="padding-top: 25px;"> <input type="text" placeholder=" e.g. User A or Peter" ng-model="user.username" class="input-text" style="padding-left:5px;" required></td>
+              <tr class="row" ng-show="user.cues == 'letter'">
+                <td class="col-sm-6 right padding-adjust-labels" style="padding-top:25px;"> Your name: <span style="color:red;">*</span></td>
+                <td class="col-sm-6" style="padding-top: 25px;"> <input type="text" placeholder=" e.g. JG, NB, DH or BS" ng-model="user.username" class="input-text" style="padding-left:5px;"></td>
               </tr>
-
-              <tr class="row">
-                <td class="col-sm-6 right padding-adjust-labels"> Gender: <span style="color:red;">*</span> </td>
-                <td class="col-sm-6 padding-adjust-radio">
-                  <input id="female" type="radio" name="user.gender" ng-model="user.gender" value="female" class="radio-button" required> <label for="female" class="gender-label"> <span ng-show="user.cues == 'Yes'"> <img src="./assets/female.png" width="50" height="50"/></span> Female </label>
-                </td>
-              </tr>
-              <tr class="row">
-                <td class="col-sm-6 right"></td>
-                <td class="col-sm-6">
-                  <input id="male" type="radio" name="user.gender" ng-model="user.gender" value="male" class="radio-button"> <label for="male" class="gender-label"> <span ng-show="user.cues == 'Yes'"> <img src="./assets/male.png" width="50" height="50"/></span> Male </label>
-                </td>
-              </tr>
-
-              <!-- <tr class="row">
-                <td class="col-sm-6 right padding-adjust-labels"> Age: <span style="color:red;">*</span></td>
-                <td class="col-sm-6" style="padding-top: 25px;"> <input type="number" placeholder=" e.g. 22" ng-model="user.age" class="input-text" style="padding-left:5px;"></td>
-              </tr> -->
 
             </table>
             <br>
