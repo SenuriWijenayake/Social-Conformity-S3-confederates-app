@@ -7,13 +7,16 @@ app.controller('HomeController', function($scope, $window, $timeout) {
   $scope.user = {};
 
   $scope.login = function(user) {
-    if (user.cues && user.username) {
-
+    if (user.cues && (user.cues == 'letter' ? user.username : true)) {
       $("#index-submit-button").attr('disabled', true);
       $("#index-loader").css("display", "block");
 
       $window.sessionStorage.setItem('cues', user.cues);
-      $window.sessionStorage.setItem('username', user.username);
+      if (user.cues == 'avatar'){
+        $window.sessionStorage.setItem('username', "User");
+      } else {
+        $window.sessionStorage.setItem('username', user.username);
+      }
 
       $timeout(function() {
         $window.location.href = './chat.html';
