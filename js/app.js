@@ -255,7 +255,7 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
       var handle = $scope.message.toLowerCase();
       if (handle == "done") {
         socket.emit('new_message', {
-          'username': $scope.currentUsername,
+          'username': $scope.username,
           'message': $scope.message,
           'avatar' : $scope.myAvatar
         });

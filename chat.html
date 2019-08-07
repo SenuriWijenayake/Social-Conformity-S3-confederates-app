@@ -42,8 +42,8 @@
 
         <div class="col-sm-12 chartdiv" id="chart-area">
           <div id="chart_div" style="display:none;margin-left: 10%;margin-top:2%;">
-            <div style="font-weight:bold;margin-bottom:2%;">Results of the group to this question (Participant's answer is highlighted. You are identified as <span style="color:green;">{{username}})..</span></div>
-            <div class="row control-option-row" ng-repeat="option in controlFeedback | orderBy : 'order'" ng-class="{'my-answer': (option.order == 1)}">
+            <div style="font-weight:bold;margin-bottom:2%;">Results of the group to this question (Participant's answer is highlighted in blue. You are identified as <span style="color:green;">{{username}} and highlighted in red)..</span></div>
+            <div class="row control-option-row" ng-repeat="option in controlFeedback | orderBy : 'order'" ng-class="{'my-answer': (option.order == 1), 'confed-answer': (option.avatar == myAvatar)}">
               <div class="col-sm-2 option-box">
                 <img src="./assets/icons/new/{{option.avatar}}" width="45" ng-show='option.order != 1 && cues == "letter"'>
                 <img src="./assets/icons/new/neutral.png" width="45" ng-show='cues == "avatar"'>
@@ -79,9 +79,9 @@
             <div style="font-weight:bold;margin-bottom:1.5%;">Results of the group to this question (your answer is highlighted)..</div>
             <div class="row control-option-row" ng-repeat="option in feedback | orderBy : 'order'" ng-style="" ng-class="{'my-answer': (option.order == 1)}">
               <div class="col-sm-2 option-box">
-                <img src="./assets/{{option.avatar}}" class="avatar-image">
-                <div class="username" ng-if="(option.order == 1)">{{currentUser}}</div>
-                <div class="username" ng-if="(option.order != 1)">{{option.username}}</div>
+                <img src="./assets/icons/new/{{line.avatar}}" width="40" ng-show='line.name == "QuizBot"'>
+                <img src="./assets/icons/new/neutral.png" width="45" ng-show='line.name != "QuizBot" && cues == "avatar" && line.class != "joined"' style="margin-top:7px;">
+                <b style="font-size: smaller;" ng-if='line.name && line.name == "QuizBot"'> {{line.name}}</b>
               </div>
               <div class="col-sm-10 feedback-explanation-box">
                 <div class="col-sm-12" style="padding: 3px;font-size: 23px;">{{option.answer}}</div>
@@ -124,16 +124,19 @@
         <div class="textarea" id="text-area">
           <div ng-repeat="line in history" class="chat-messages" ng-class="{'last-line':$last, 'joined' : {{line.class == 'joined'}}, 'status' : {{line.class == 'status'}}}">
             <div class="row">
-              <div class="col-sm-1" style="margin-left: 20px;padding-right: 0px;padding-left: 0px;text-align:center;">
-                <img src="./assets/icons/{{line.avatar}}" width="40">
-                <b style="font-size: smaller;" ng-if='line.name'> {{line.name}}</b>
+              <div class="col-sm-1" style="margin-left:20px;padding-right:0px;padding-left:0px;text-align:center;">
+                <img src="./assets/icons/new/{{line.avatar}}" width="40" ng-show='line.name == "QuizBot"'>
+                <img src="./assets/icons/new/{{line.avatar}}" width="45" ng-show='line.name != "QuizBot" && cues == "letter"' style="margin-top:7px;">
+                <img src="{{line.avatar}}" width="45" ng-show='line.realUser && cues == "letter"' style="margin-top:7px;">
+                <img src="./assets/icons/new/neutral.png" width="45" ng-show='line.name != "QuizBot" && cues == "avatar" && line.class != "joined"' style="margin-top:7px;">
+                <b style="font-size: smaller;" ng-if='line.name && line.name == "QuizBot"'> {{line.name}}</b>
               </div>
               <div class="col-sm-10" ng-class="{'message-text' : {{line.class != 'joined' && line.class != 'status'}}, 'my-answer-text' : {{username == line.name}}}">
                 {{line.msg}}
               </div>
             </div>
           </div>
-        </div>
+          </div>
         <div class="row inputarea">
           <div class="col-sm-10">
             <textarea ng-model="message" id="chat-text" placeholder="Type your message here.." class="text-box" rows="3" disabled></textarea>
