@@ -13,7 +13,7 @@ app.controller('HomeController', function($scope, $window, $timeout) {
 
       $window.sessionStorage.setItem('cues', user.cues);
       if (user.cues == 'avatar'){
-        $window.sessionStorage.setItem('username', "User");
+        // $window.sessionStorage.setItem('username', "User");
       } else {
         $window.sessionStorage.setItem('username', user.username);
       }
