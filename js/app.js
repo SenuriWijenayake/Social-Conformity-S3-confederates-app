@@ -155,7 +155,6 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
 
   //Receive questions
   socket.on('new_question', (res) => {
-    $("#avatar_div").css("display", "none");
     $("#chart_div").css("display", "none");
 
     $timeout(function() {
@@ -172,6 +171,7 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
 
     $scope.question = res.question;
     $scope.qOnly = true;
+    $scope.qCount++;
     // $scope.currentUser = data.currentUser;
     $("#qBox").css("display", "block");
 
@@ -188,50 +188,12 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
     $("#loader-text").css("display", "none");
 
     $scope.question = res.question;
-    if ($scope.cues == 'avatar') {
-      $scope.avatarFeedback(res.feedback);
-    } else {
-      $scope.createControlFeedback(res.feedback);
-    }
+    $scope.createControlFeedback(res.feedback);
   });
-
-  $scope.avatarFeedback = function(data) {
-    $scope.feedback = data;
-    $("#avatar_div").css("display", "block");
-
-    if ($scope.cues == 'No' && $scope.discussion == 'No') {
-      $timeout(function() {
-        $("#change-section-ncnd").css("display", "block");
-      }, 2000);
-    } else if ($scope.cues == 'Yes' && $scope.discussion == 'No') {
-      $timeout(function() {
-        $("#change-section-cnd").css("display", "block");
-      }, 2000);
-    } else {
-      $timeout(function() {
-        $("#change-section").css("display", "block");
-      }, 2000);
-    }
-
-  };
 
   $scope.createControlFeedback = function(feedback) {
     $scope.controlFeedback = feedback;
     $("#chart_div").css("display", "block");
-
-    if ($scope.cues == 'No' && $scope.discussion == 'No') {
-      $timeout(function() {
-        $("#change-section-ncnd").css("display", "block");
-      }, 2000);
-    } else if ($scope.cues == 'Yes' && $scope.discussion == 'No') {
-      $timeout(function() {
-        $("#change-section-cnd").css("display", "block");
-      }, 2000);
-    } else {
-      $timeout(function() {
-        $("#change-section").css("display", "block");
-      }, 2000);
-    }
   };
 
   //Function to adjust scrolling - not working

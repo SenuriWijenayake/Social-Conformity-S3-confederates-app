@@ -42,12 +42,13 @@
 
         <div class="col-sm-12 chartdiv" id="chart-area">
           <div id="chart_div" style="display:none;margin-left: 10%;margin-top:2%;">
-            <div style="font-weight:bold;margin-bottom:2%;">Results of the group to this question (Participant's answer is highlighted in blue. You are identified as <span style="color:green;">{{username}} and highlighted in red)..</span></div>
-            <div class="row control-option-row" ng-repeat="option in controlFeedback | orderBy : 'order'" ng-class="{'my-answer': (option.order == 1), 'confed-answer': (option.avatar == myAvatar)}">
+            <div style="font-weight:bold;margin-bottom:2%;">Results of the group to this question (Participant's answer is highlighted in blue. You are identified as <span style="color:red;">{{username}} highlighted in red)..</span></div>
+            <div class="row control-option-row" ng-repeat="option in controlFeedback | orderBy : 'order'" ng-class="{'my-answer': (option.order == 1), 'confed-answer': (option.username == username)}">
               <div class="col-sm-2 option-box">
-                <img src="./assets/icons/new/{{option.avatar}}" width="45" ng-if='option.order != 1 && cues == "letter"'>
-                <img src="./assets/icons/new/neutral.png" width="45" ng-if='cues == "avatar"'>
-                <img src="{{option.avatar}}" width="45" ng-if='option.order == 1 && cues == "letter"'>
+                <img src="./assets/icons/new/{{option.avatar}}" width="40" ng-if='option.order != 1 && cues == "letter"'>
+                <img src="./assets/icons/new/neutral.png" width="40" ng-if='cues == "avatar"'>
+                <img src="{{option.avatar}}" width="40" ng-if='option.order == 1 && cues == "letter"'>
+                <div style="font-size: 13px; font-weight:bold;margin-top: -4px;">{{option.username}}</div>
               </div>
               <div class="col-sm-10 feedback-explanation-box">
                 <div class="col-sm-12" style="padding: 3px;font-size: 23px;">{{option.answer}}</div>
@@ -73,50 +74,12 @@
           <div id="loader" style="display: none;" class="loader"></div>
           <div id="loader-text" style="display: none;" class="loader-text">Waiting until the participant answers the question.. Please wait.</div>
         </div>
-
-        <div class="col-sm-12 avatardiv" id="avatar-area">
-          <div id="avatar_div" style="display:none;margin-left: 10%;margin-top:2%;">
-            <div style="font-weight:bold;margin-bottom:1.5%;">Results of the group to this question (your answer is highlighted)..</div>
-            <div class="row control-option-row" ng-repeat="option in feedback | orderBy : 'order'" ng-style="" ng-class="{'my-answer': (option.order == 1)}">
-              <div class="col-sm-2 option-box">
-                <img src="./assets/icons/new/{{line.avatar}}" width="40" ng-if='line.name == "QuizBot"'>
-                <img src="./assets/icons/new/neutral.png" width="45" ng-if='line.name != "QuizBot" && cues == "avatar" && line.class != "joined"' style="margin-top:7px;">
-                <b style="font-size: smaller;" ng-if='line.name && line.name == "QuizBot"'> {{line.name}}</b>
-              </div>
-              <div class="col-sm-10 feedback-explanation-box">
-                <div class="col-sm-12" style="padding: 3px;font-size: 23px;">{{option.answer}}</div>
-                <!-- <div class="col-sm-12 explanation-area"><b>Explanation : </b>{{option.explanation}}</div> -->
-              </div>
-            </div>
-            <div class="row">
-              <div id="change-section-cnd" style="margin-bottom: 50px;padding: 20px;margin-top: 20px;border: solid red;display:none;">
-                <div class="row">
-                  <div id="descr" class="col-sm-12">
-                    <p class="change-text">Would you like to make changes to your answer, confidence or explanation?</p>
-                  </div>
-
-                  <div class="col-sm-6">
-                    <input type="button" value="Yes" class="yes-button" ng-click="yes()" />
-                  </div>
-                  <div class="col-sm-6">
-                    <input type="button" value="No, next question" class="no-button" ng-click="next()" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div id="loader" style="display: none;" class="loader"></div>
-          <div id="loader-text" style="display: none;" class="loader-text">Getting answers of other participants.. Please wait.</div>
-        </div>
-
         <div class="col-sm-12">
           <div id="loader" style="display: none;" class="loader"></div>
           <div id="loader-text" style="display: none;" class="loader-text">Getting answers of other participants.. Please wait.</div>
         </div>
 
       </div>
-
-
 
       <div class="chatarea col-sm-6" id="chat-area" ng-show="discussion == 'Yes'">
         <div class="minimize">
