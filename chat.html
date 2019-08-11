@@ -55,30 +55,10 @@
                 <!-- <div class="col-sm-12 explanation-area"><b>Explanation : </b>{{option.explanation}}</div> -->
               </div>
             </div>
-
-            <div id="change-section-ncnd" style="margin-bottom: 50px;padding: 20px;margin-top: 20px;border: solid red;display:none;">
-              <div class="row">
-                <div id="descr" class="col-sm-12">
-                  <p class="change-text">Would you like to make changes to your answer, confidence or explanation?</p>
-                </div>
-
-                <div class="col-sm-6">
-                  <input type="button" value="Yes" class="yes-button" ng-click="yes()" />
-                </div>
-                <div class="col-sm-6">
-                  <input type="button" value="No, next question" class="no-button" ng-click="next()" />
-                </div>
-              </div>
-            </div>
           </div>
           <div id="loader" style="display: none;" class="loader"></div>
           <div id="loader-text" style="display: none;" class="loader-text">Waiting until the participant answers the question.. Please wait.</div>
         </div>
-        <div class="col-sm-12">
-          <div id="loader" style="display: none;" class="loader"></div>
-          <div id="loader-text" style="display: none;" class="loader-text">Getting answers of other participants.. Please wait.</div>
-        </div>
-
       </div>
 
       <div class="chatarea col-sm-6" id="chat-area" ng-show="discussion == 'Yes'">

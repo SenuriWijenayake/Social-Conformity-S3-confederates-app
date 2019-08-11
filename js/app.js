@@ -155,26 +155,22 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
 
   //Receive questions
   socket.on('new_question', (res) => {
+
     $("#chart_div").css("display", "none");
-
-    $timeout(function() {
-      $scope.history.push({
-        name: res.username,
-        msg: res.message,
-        avatar : res.avatar
-      });
-    }, 1000);
-
-    $timeout(function() {
-      $scope.scrollAdjust();
-    }, 1500);
-
-    $scope.question = res.question;
+    $scope.question = res.info;
     $scope.qOnly = true;
     $scope.qCount++;
-    // $scope.currentUser = data.currentUser;
-    $("#qBox").css("display", "block");
 
+    $scope.history.push({
+      name: res.username,
+      msg: res.message,
+      avatar : res.avatar
+    });
+    $timeout(function() {
+      $scope.scrollAdjust();
+    }, 500);
+
+    $("#qBox").css("display", "block");
     //Loader activated
     $("#loader").css("display", "block");
     $("#loader-text").css("display", "block");
@@ -186,14 +182,15 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
     //Loader deactivated
     $("#loader").css("display", "none");
     $("#loader-text").css("display", "none");
-
     $scope.question = res.question;
-    $scope.createControlFeedback(res.feedback);
+    $scope.createFeedback(res.feedback);
   });
 
-  $scope.createControlFeedback = function(feedback) {
+  $scope.createFeedback = function (feedback){
     $scope.controlFeedback = feedback;
-    $("#chart_div").css("display", "block");
+    $timeout(function() {
+      $("#chart_div").css("display", "block");
+    }, 1000);
   };
 
   //Function to adjust scrolling - not working
