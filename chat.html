@@ -89,10 +89,10 @@
             <div class="row">
               <div class="col-sm-1" style="margin-left:20px;padding-right:0px;padding-left:0px;text-align:center;">
                 <img src="./assets/icons/new/{{line.avatar}}" width="40" ng-if='line.name == "QuizBot"'>
-                <img src="./assets/icons/new/{{line.avatar}}" width="45" ng-if='line.realUser != true && line.name != "QuizBot" && cues == "letter"' style="margin-top:7px;">
-                <img src="{{line.avatar}}" width="45" ng-if='line.realUser == true && cues == "letter"' style="margin-top:7px;">
-                <img src="./assets/icons/new/neutral.png" width="45" ng-if='line.name != "QuizBot" && cues == "avatar" && line.class != "joined" && line.class != "status"' style="margin-top:7px;">
-                <b style="font-size: smaller;" ng-if='line.name && line.name == "QuizBot"'> {{line.name}}</b>
+                <img src="./assets/icons/new/{{line.avatar}}" width="40" ng-if='line.realUser != true && line.name != "QuizBot" && cues == "letter"'>
+                <img src="{{line.avatar}}" width="40" ng-if='line.realUser == true && cues == "letter"'>
+                <img src="./assets/icons/new/neutral.png" width="40" ng-if='line.name != "QuizBot" && cues == "avatar" && line.class != "joined" && line.class != "status"'>
+                <b style="font-size: smaller;" ng-if='line.name'> {{line.name}}</b>
               </div>
               <div class="col-sm-10" ng-class="{'message-text' : {{line.class != 'joined' && line.class != 'status'}}, 'my-answer-text' : {{username == line.name && cues == 'letter'}}}">
                 {{line.msg}}
