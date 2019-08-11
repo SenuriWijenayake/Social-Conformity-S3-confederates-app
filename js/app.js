@@ -12,11 +12,7 @@ app.controller('HomeController', function($scope, $window, $timeout) {
       $("#index-loader").css("display", "block");
 
       $window.sessionStorage.setItem('cues', user.cues);
-      if (user.cues == 'avatar'){
-        // $window.sessionStorage.setItem('username', "User");
-      } else {
-        $window.sessionStorage.setItem('username', user.username);
-      }
+      $window.sessionStorage.setItem('username', user.username);
 
       $timeout(function() {
         $window.location.href = './chat.html';

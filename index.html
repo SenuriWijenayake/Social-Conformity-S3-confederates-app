@@ -40,17 +40,11 @@
                   </select>
                 </td>
               </tr>
-<!--
-              <tr class="row">
-                <td class="col-sm-6 right padding-adjust-labels"> Discussion (to be selected by the researcher): <span style="color:red;">*</span></td>
-                <td class="col-sm-6" style="padding-top: 10px;">
-                  <select required ng-model="user.discussion" class="input-text">
-                    <option value="">None</option>
-                    <option value="Yes">Yes</option>
-                    <option value="No">No</option>
-                  </select>
-                </td>
-              </tr> -->
+
+              <tr class="row" ng-show="user.cues == 'avatar'">
+                <td class="col-sm-6 right padding-adjust-labels" style="padding-top:25px;"> Your name: <span style="color:red;">*</span></td>
+                <td class="col-sm-6" style="padding-top: 25px;"> <input type="text" placeholder=" e.g. User 1, User 2 etc." ng-model="user.username" class="input-text" style="padding-left:5px;"></td>
+              </tr>
 
               <!--For cues condition-->
               <tr class="row" ng-show="user.cues == 'letter'">
