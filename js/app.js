@@ -105,9 +105,6 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
 
   //When you get the start signal
   socket.on('ready', (data) => {
-    $("#chat-text").attr("disabled", false);
-    $(".send-button").css("background-color", "#117A65");
-    $(".send-button").css("border", "1px solid #117A65");
 
     $scope.history.push({
       name: data.username,
@@ -133,6 +130,12 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
 
   //Receive notification as to when the user starts the quiz
   socket.on('user_started', (data) => {
+
+    //Disable the chat
+    $("#chat-text").attr("disabled", true);
+    $(".send-button").css("background-color", "grey");
+    $(".send-button").css("border", "1px solid grey");
+
     $scope.history.push({
       name: data.username,
       msg: data.message,
@@ -155,6 +158,11 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
 
   //Receive questions
   socket.on('new_question', (res) => {
+
+    //Disable the chat box
+    $("#chat-text").attr("disabled", true);
+    $(".send-button").css("background-color", "grey");
+    $(".send-button").css("border", "1px solid grey");
 
     $("#chart_div").css("display", "none");
     $scope.question = res.info;
@@ -186,11 +194,36 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
     $scope.createFeedback(res.feedback);
   });
 
+  socket.on('time_up', (data) => {
+    //Disable the chat box
+    $("#chat-text").attr("disabled", true);
+    $(".send-button").css("background-color", "grey");
+    $(".send-button").css("border", "1px solid grey");
+
+    $timeout(function() {
+      $scope.history.push({
+        name: data.username,
+        msg: data.message,
+        avatar: data.avatar,
+        class: data.class,
+        realUser: data.realUser
+      });
+    }, 500);
+    $timeout(function() {
+      $scope.scrollAdjust();
+    }, 1000);
+  });
+
   $scope.createFeedback = function (feedback){
     $scope.controlFeedback = feedback;
     $timeout(function() {
       $("#chart_div").css("display", "block");
     }, 1000);
+
+    //Enable the chat box
+    $("#chat-text").attr("disabled", false);
+    $(".send-button").css("background-color", "#117A65");
+    $(".send-button").css("border", "1px solid #117A65");
   };
 
   //Function to adjust scrolling - not working
