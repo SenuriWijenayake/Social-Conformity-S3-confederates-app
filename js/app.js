@@ -111,6 +111,24 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
     }, 1000);
   });
 
+  //Socket on done
+  socket.on('done', (data) => {
+    $timeout(function() {
+      $scope.history.push({
+        name: data.username,
+        msg: data.message,
+        class: data.class,
+        timestamp: $scope.getTimestamp(),
+        avatar: data.avatar,
+        realUser: data.realUser
+      });
+    }, 100);
+
+    $timeout(function() {
+      $scope.scrollAdjust();
+    }, 500);
+  });
+
   //Send a new message to the group chat. Visible to all
   socket.on('new_message', (data) => {
     $timeout(function() {
@@ -288,21 +306,14 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
 
       //Handle requests
       var handle = $scope.message.toLowerCase();
-      if (handle == "done") {
-        socket.emit('new_message', {
-          'username': $scope.username,
-          'message': $scope.message,
-          'avatar' : $scope.myAvatar
-        });
 
-        $timeout(function() {
-          $scope.history.push({
-            name: "QuizBot",
-            msg: "You may change your answer, confidence or explanation now.",
-            timestamp: $scope.getTimestamp(),
-            avatar: "qb.png",
-          });
-        }, 2000);
+      if (handle == "done") {
+        socket.emit('done', {
+          'username': $scope.currentUsername,
+          'message': $scope.message,
+          'avatar': $scope.myAvatar,
+          'realUser': false
+        });
 
       } else {
         socket.emit('new_message', {
