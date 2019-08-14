@@ -70,6 +70,13 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
     }
   };
 
+  //Function to get timestamp
+  $scope.getTimestamp = function() {
+    var dt = new Date();
+    dt.setHours(dt.getHours() + 10);
+    return dt.toUTCString();
+  };
+
   //Connecting the client to the socket
   $scope.userState = 'ready';
   $scope.history = [];
@@ -83,6 +90,7 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
     $scope.history.push({
       name: "QuizBot",
       avatar: "qb.png",
+      timestamp: $scope.getTimestamp(),
       msg: "Hello " + $scope.username + "! Welcome to the quiz. I am the QuizBot. I will show you the feedback the real participant sees during the quiz, on the left hand side. Based on the answer assigned to you, you may chose your explanation from the script provided."
     });
   }, 2000);
@@ -94,6 +102,7 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
         name: data.username,
         msg: data.message,
         avatar: data.avatar,
+        timestamp: $scope.getTimestamp(),
         class: data.class,
         realUser: data.realUser
       });
@@ -109,6 +118,7 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
     $scope.history.push({
       name: data.username,
       msg: data.message,
+      timestamp: $scope.getTimestamp(),
       avatar: data.avatar
     });
     $timeout(function() {
@@ -120,6 +130,7 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
   socket.on('connected', (data) => {
     $scope.history.push({
       msg: data.message,
+      timestamp: $scope.getTimestamp(),
       class: data.class,
     });
     $timeout(function() {
@@ -139,6 +150,7 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
     $scope.history.push({
       name: data.username,
       msg: data.message,
+      timestamp: $scope.getTimestamp(),
       avatar : data.avatar
     });
     $timeout(function() {
@@ -172,6 +184,7 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
     $scope.history.push({
       name: res.username,
       msg: res.message,
+      timestamp: $scope.getTimestamp(),
       avatar : res.avatar
     });
     $timeout(function() {
@@ -205,6 +218,7 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
         name: data.username,
         msg: data.message,
         avatar: data.avatar,
+        timestamp: $scope.getTimestamp(),
         class: data.class,
         realUser: data.realUser
       });
@@ -261,6 +275,7 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
           $scope.history.push({
             name: "QuizBot",
             msg: "You may change your answer, confidence or explanation now.",
+            timestamp: $scope.getTimestamp(),
             avatar: "qb.png",
           });
         }, 2000);
