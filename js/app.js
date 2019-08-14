@@ -96,6 +96,22 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
   }, 2000);
 
   //Send a new message to the group chat. Visible to all
+  socket.on('making_changes', (data) => {
+    $timeout(function() {
+      $scope.history.push({
+        name: data.username,
+        msg: data.message,
+        avatar: data.avatar,
+        realUser: data.realUser,
+        timestamp: $scope.getTimestamp()
+      });
+    }, 500);
+    $timeout(function() {
+      $scope.scrollAdjust();
+    }, 1000);
+  });
+
+  //Send a new message to the group chat. Visible to all
   socket.on('new_message', (data) => {
     $timeout(function() {
       $scope.history.push({
@@ -106,21 +122,24 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
         class: data.class,
         realUser: data.realUser
       });
-    }, 500);
+    }, 100);
+
     $timeout(function() {
       $scope.scrollAdjust();
-    }, 1000);
+    }, 500);
   });
 
   //When you get the start signal
   socket.on('ready', (data) => {
+    $timeout(function() {
+      $scope.history.push({
+        name: data.username,
+        msg: data.message,
+        timestamp: $scope.getTimestamp(),
+        avatar: data.avatar
+      });
+    }, 100);
 
-    $scope.history.push({
-      name: data.username,
-      msg: data.message,
-      timestamp: $scope.getTimestamp(),
-      avatar: data.avatar
-    });
     $timeout(function() {
       $scope.scrollAdjust();
     }, 500);
@@ -147,12 +166,15 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
     $(".send-button").css("background-color", "grey");
     $(".send-button").css("border", "1px solid grey");
 
-    $scope.history.push({
-      name: data.username,
-      msg: data.message,
-      timestamp: $scope.getTimestamp(),
-      avatar : data.avatar
-    });
+    $timeout(function() {
+      $scope.history.push({
+        name: data.username,
+        msg: data.message,
+        timestamp: $scope.getTimestamp(),
+        avatar : data.avatar
+      });
+    }, 100);
+
     $timeout(function() {
       $scope.scrollAdjust();
     }, 500);
@@ -181,12 +203,15 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
     $scope.qOnly = true;
     $scope.qCount++;
 
-    $scope.history.push({
-      name: res.username,
-      msg: res.message,
-      timestamp: $scope.getTimestamp(),
-      avatar : res.avatar
-    });
+    $timeout(function() {
+      $scope.history.push({
+        name: res.username,
+        msg: res.message,
+        timestamp: $scope.getTimestamp(),
+        avatar : res.avatar
+      });
+    }, 100);
+
     $timeout(function() {
       $scope.scrollAdjust();
     }, 500);
@@ -222,22 +247,21 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
         class: data.class,
         realUser: data.realUser
       });
-    }, 500);
+    }, 100);
     $timeout(function() {
       $scope.scrollAdjust();
-    }, 1000);
+    }, 500);
   });
 
   $scope.createFeedback = function (feedback){
     $scope.controlFeedback = feedback;
     $timeout(function() {
       $("#chart_div").css("display", "block");
+      //Enable the chat box
+      $("#chat-text").attr("disabled", false);
+      $(".send-button").css("background-color", "#117A65");
+      $(".send-button").css("border", "1px solid #117A65");
     }, 1000);
-
-    //Enable the chat box
-    $("#chat-text").attr("disabled", false);
-    $(".send-button").css("background-color", "#117A65");
-    $(".send-button").css("border", "1px solid #117A65");
   };
 
   //Function to adjust scrolling - not working
