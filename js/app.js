@@ -61,9 +61,8 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
     if ($scope.onbeforeunloadEnabled) {
       var dialogText = 'You have unsaved changes. Are you sure you want to leave the site?';
       e.returnValue = dialogText;
-
       //Disconnect sockets if there are any
-      if ($scope.discussion) {
+      if ($scope.discussion == 'Yes') {
         socket.disconnect();
       }
       return dialogText;
@@ -189,7 +188,7 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
         name: data.username,
         msg: data.message,
         timestamp: $scope.getTimestamp(),
-        avatar : data.avatar
+        avatar: data.avatar
       });
     }, 100);
 
@@ -226,7 +225,7 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
         name: res.username,
         msg: res.message,
         timestamp: $scope.getTimestamp(),
-        avatar : res.avatar
+        avatar: res.avatar
       });
     }, 100);
 
@@ -241,20 +240,7 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
 
   });
 
-  socket.on('feedback', (response) => {
-    var res = JSON.parse(response.info);
-    //Loader deactivated
-    $("#loader").css("display", "none");
-    $("#loader-text").css("display", "none");
-    $scope.question = res.question;
-    $scope.createFeedback(res.feedback);
-  });
-
-  socket.on('time_up', (data) => {
-    //Disable the chat box
-    $("#chat-text").attr("disabled", true);
-    $(".send-button").css("background-color", "grey");
-    $(".send-button").css("border", "1px solid grey");
+  socket.on('quiz_completed', (response) => {
 
     $timeout(function() {
       $scope.history.push({
@@ -266,77 +252,114 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
         realUser: data.realUser
       });
     }, 100);
+
     $timeout(function() {
       $scope.scrollAdjust();
     }, 500);
-  });
 
-  $scope.createFeedback = function (feedback){
-    $scope.controlFeedback = feedback;
+  $timeout(function() {
+    socket.disconnect();
+    $window.location.href = './index.html';
+  }, 1000);
+
+});
+
+socket.on('feedback', (response) => {
+  var res = JSON.parse(response.info);
+  //Loader deactivated
+  $("#loader").css("display", "none");
+  $("#loader-text").css("display", "none");
+  $scope.question = res.question;
+  $scope.createFeedback(res.feedback);
+});
+
+socket.on('time_up', (data) => {
+  //Disable the chat box
+  $("#chat-text").attr("disabled", true);
+  $(".send-button").css("background-color", "grey");
+  $(".send-button").css("border", "1px solid grey");
+
+  $timeout(function() {
+    $scope.history.push({
+      name: data.username,
+      msg: data.message,
+      avatar: data.avatar,
+      timestamp: $scope.getTimestamp(),
+      class: data.class,
+      realUser: data.realUser
+    });
+  }, 100);
+  $timeout(function() {
+    $scope.scrollAdjust();
+  }, 500);
+});
+
+$scope.createFeedback = function(feedback) {
+  $scope.controlFeedback = feedback;
+  $timeout(function() {
+    $("#chart_div").css("display", "block");
+    //Enable the chat box
+    $("#chat-text").attr("disabled", false);
+    $(".send-button").css("background-color", "#117A65");
+    $(".send-button").css("border", "1px solid #117A65");
+  }, 1000);
+};
+
+//Function to adjust scrolling - not working
+$scope.scrollAdjust = function() {
+  var element = document.getElementById("text-area");
+  element.scrollTop = element.scrollHeight;
+};
+
+//Call sendMessage on Enter
+var chatBox = document.getElementById("chat-text");
+
+// Execute a function when the user releases a key on the keyboard
+chatBox.addEventListener("keyup", function(event) {
+  // Cancel the default action, if needed
+  event.preventDefault();
+  // Number 13 is the "Enter" key on the keyboard
+  if (event.keyCode === 13) {
+    document.getElementById("sendButton").click();
+  }
+});
+
+$scope.sendMessage = function() {
+  if ($scope.message != undefined && $scope.message.trim().length != 0) {
+
+    //Handle requests
+    var handle = $scope.message.toLowerCase();
+
+    if (handle == "done") {
+      socket.emit('done', {
+        'username': $scope.currentUsername,
+        'message': $scope.message,
+        'avatar': $scope.myAvatar,
+        'realUser': false
+      });
+
+    } else {
+      socket.emit('new_message', {
+        'username': $scope.username,
+        'message': $scope.message,
+        'avatar': $scope.myAvatar
+      });
+    }
+
+    $scope.message = "";
     $timeout(function() {
-      $("#chart_div").css("display", "block");
-      //Enable the chat box
-      $("#chat-text").attr("disabled", false);
-      $(".send-button").css("background-color", "#117A65");
-      $(".send-button").css("border", "1px solid #117A65");
-    }, 1000);
-  };
+      $scope.scrollAdjust();
+    }, 500);
+  }
+};
 
-  //Function to adjust scrolling - not working
-  $scope.scrollAdjust = function() {
-    var element = document.getElementById("text-area");
-    element.scrollTop = element.scrollHeight;
-  };
-
-  //Call sendMessage on Enter
-  var chatBox = document.getElementById("chat-text");
-
-  // Execute a function when the user releases a key on the keyboard
-  chatBox.addEventListener("keyup", function(event) {
-    // Cancel the default action, if needed
-    event.preventDefault();
-    // Number 13 is the "Enter" key on the keyboard
-    if (event.keyCode === 13) {
-      document.getElementById("sendButton").click();
-    }
-  });
-
-  $scope.sendMessage = function() {
-    if ($scope.message != undefined && $scope.message.trim().length != 0) {
-
-      //Handle requests
-      var handle = $scope.message.toLowerCase();
-
-      if (handle == "done") {
-        socket.emit('done', {
-          'username': $scope.currentUsername,
-          'message': $scope.message,
-          'avatar': $scope.myAvatar,
-          'realUser': false
-        });
-
-      } else {
-        socket.emit('new_message', {
-          'username': $scope.username,
-          'message': $scope.message,
-          'avatar' : $scope.myAvatar
-        });
-      }
-
-      $scope.message = "";
-      $timeout(function() {
-        $scope.scrollAdjust();
-      }, 500);
-    }
-  };
-
-  $scope.isKeyAvailable = function(key, obj) {
-    for (var i = 0; i < obj.length; i++) {
-      if (key == obj[i].key) {
-        return i;
-      }
-    }
-    return -1;
-  };
+$scope.isKeyAvailable = function(key, obj) {
+for (var i = 0; i < obj.length; i++) {
+  if (key == obj[i].key) {
+    return i;
+  }
+}
+return -1;
+};
 
 });
