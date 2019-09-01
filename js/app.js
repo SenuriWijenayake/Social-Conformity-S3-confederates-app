@@ -304,6 +304,10 @@ socket.on('feedback', (response) => {
 socket.on('start_timer', (response) => {
   $scope.startTimer();
   $("#timer").css("display", "block");
+  //Enable the chat box
+  $("#chat-text").attr("disabled", false);
+  $(".send-button").css("background-color", "#117A65");
+  $(".send-button").css("border", "1px solid #117A65");
 });
 
 
@@ -341,10 +345,6 @@ $scope.createFeedback = function(feedback) {
   $scope.controlFeedback = feedback;
   $timeout(function() {
     $("#chart_div").css("display", "block");
-    //Enable the chat box
-    $("#chat-text").attr("disabled", false);
-    $(".send-button").css("background-color", "#117A65");
-    $(".send-button").css("border", "1px solid #117A65");
   }, 1000);
 };
 
