@@ -60,7 +60,7 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
   $scope.startTimer = function() {
     // Set the date we're counting down to
     var dt = new Date();
-    dt.setMinutes(dt.getMinutes() + 5);
+    dt.setMinutes(dt.getMinutes() + 2);
     var countDownDate = dt;
 
     // Update the count down every 1 second
@@ -79,7 +79,6 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
       // If the count down is finished, write some text
       if (distance < 0) {
         clearInterval(x);
-        document.getElementById("timer").innerHTML = "Time is up!";
       }
     }, 1000);
   };
@@ -144,7 +143,7 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
 
     clearInterval(x);
     $("#timer").css("display", "none");
-    document.getElementById("timer").innerHTML = "Time reamining : 5m 00s";
+    document.getElementById("timer").innerHTML = "Time reamining : 2m 00s";
 
     $timeout(function() {
       $scope.history.push({
@@ -329,7 +328,7 @@ $scope.getMyQuote = function(feedback){
 socket.on('time_up', (data) => {
 
   $("#timer").css("display", "none");
-  document.getElementById("timer").innerHTML = "Time reamining : 5m 00s";
+  document.getElementById("timer").innerHTML = "Time reamining : 2m 00s";
   //Disable the chat box
   $("#chat-text").attr("disabled", true);
   $(".send-button").css("background-color", "grey");
@@ -385,10 +384,10 @@ $scope.sendMessage = function() {
     if (handle == "done") {
       clearInterval(x);
       $("#timer").css("display", "none");
-      document.getElementById("timer").innerHTML = "Time reamining : 5m 00s";
+      document.getElementById("timer").innerHTML = "Time reamining : 2m 00s";
 
       socket.emit('done', {
-        'username': $scope.currentUsername,
+        'username': $scope.username,
         'message': $scope.message,
         'avatar': $scope.myAvatar,
         'realUser': false
