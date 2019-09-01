@@ -308,6 +308,7 @@ socket.on('feedback', (response) => {
 });
 
 socket.on('start_timer', (response) => {
+  console.log("Starting timer");
   $scope.startTimer();
   $("#timer").css("display", "block");
   //Enable the chat box
@@ -327,8 +328,10 @@ $scope.getMyQuote = function(feedback){
 
 socket.on('time_up', (data) => {
 
+  clearInterval(x);
   $("#timer").css("display", "none");
   document.getElementById("timer").innerHTML = "Time reamining : 2m 00s";
+  
   //Disable the chat box
   $("#chat-text").attr("disabled", true);
   $(".send-button").css("background-color", "grey");
