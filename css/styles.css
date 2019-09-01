@@ -61,6 +61,17 @@
 /* End of Index page */
 
 /* Chat Page */
+.timer{
+  margin-bottom:5px;
+  margin-top: 5px;
+  height: 20px;
+  padding:5px;
+  width:50%;
+  color: red;
+  text-align: center;
+  font-size: 25px;
+  display: none;
+}
 
 .timestamp{
   font-size: 10px;

@@ -56,6 +56,32 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
     }
   });
 
+  $scope.startTimer = function() {
+    // Set the date we're counting down to
+    var dt = new Date();
+    dt.setMinutes(dt.getMinutes() + 5);
+    var countDownDate = dt;
+
+    // Update the count down every 1 second
+    var x = setInterval(function() {
+      // Get today's date and time
+      var now = new Date().getTime();
+      // Find the distance between now and the count down date
+      var distance = countDownDate - now;
+      var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      // Display the result in the element with id="demo"
+      document.getElementById("timer").innerHTML = "Time reamining : " + minutes + "m " + seconds + "s ";
+
+      // If the count down is finished, write some text
+      if (distance < 0) {
+        clearInterval(x);
+        document.getElementById("timer").innerHTML = "Time is up!";
+      }
+    }, 1000);
+  };
+
   //Confirmation message before reload and back
   $window.onbeforeunload = function(e) {
     if ($scope.onbeforeunloadEnabled) {
@@ -71,9 +97,10 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
 
   //Function to get timestamp
   $scope.getTimestamp = function() {
-    var dt = new Date();
-    dt.setHours(dt.getHours() + 10);
-    return dt.toUTCString();
+    return new Date().toUTCString();
+    // var dt = new Date();
+    // dt.setHours(dt.getHours() + 10);
+    // return dt.toUTCString();
   };
 
   //Connecting the client to the socket
@@ -271,7 +298,23 @@ socket.on('feedback', (response) => {
   $("#loader-text").css("display", "none");
   $scope.question = res.question;
   $scope.createFeedback(res.feedback);
+  $scope.getMyQuote(res.feedback);
 });
+
+socket.on('start_timer', (response) => {
+  $scope.startTimer();
+  $("#timer").css("display", "block");
+});
+
+
+$scope.getMyQuote = function(feedback){
+  for (var i = 0; i < feedback.length; i++){
+    if(feedback[i].username == $scope.username){
+      $scope.message = feedback[i].quote;
+      console.log(feedback[i].quote);
+    }
+  }
+};
 
 socket.on('time_up', (data) => {
   //Disable the chat box
