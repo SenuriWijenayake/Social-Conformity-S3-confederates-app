@@ -74,7 +74,7 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
       var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
       // Display the result in the element with id="demo"
-      document.getElementById("timer").innerHTML = "Time reamining : " + minutes + "m " + seconds + "s ";
+      document.getElementById("timer").innerHTML = "Time remaining : " + minutes + "m " + seconds + "s ";
 
       // If the count down is finished, write some text
       if (distance < 0) {
@@ -144,7 +144,7 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
 
     clearInterval(x);
     $("#timer").css("display", "none");
-    document.getElementById("timer").innerHTML = "Time reamining : 2m 00s";
+    document.getElementById("timer").innerHTML = "Time remaining : 2m 00s";
 
     $timeout(function() {
       $scope.history.push({
@@ -331,7 +331,7 @@ socket.on('time_up', (data) => {
 
   clearInterval(x);
   $("#timer").css("display", "none");
-  document.getElementById("timer").innerHTML = "Time reamining : 2m 00s";
+  document.getElementById("timer").innerHTML = "Time remaining : 2m 00s";
 
   //Disable the chat box
   $("#chat-text").attr("disabled", true);
@@ -388,7 +388,7 @@ $scope.sendMessage = function() {
     if (handle == "done") {
       clearInterval(x);
       $("#timer").css("display", "none");
-      document.getElementById("timer").innerHTML = "Time reamining : 2m 00s";
+      document.getElementById("timer").innerHTML = "Time remaining : 2m 00s";
 
       socket.emit('done', {
         'username': $scope.username,
