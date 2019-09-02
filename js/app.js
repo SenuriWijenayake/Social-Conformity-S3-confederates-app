@@ -1,6 +1,6 @@
 var app = angular.module('app', []);
-//var api = 'https://stark-sands-60128.herokuapp.com';
-var api = 'http://localhost:5000';
+var api = 'https://mysterious-badlands-68636.herokuapp.com';
+// var api = 'http://localhost:5000';
 
 app.controller('HomeController', function($scope, $window, $timeout) {
 
@@ -107,7 +107,8 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
   //Connecting the client to the socket
   $scope.userState = 'ready';
   $scope.history = [];
-  var socket = io.connect('http://localhost:5000');
+  var socket = io.connect('https://mysterious-badlands-68636.herokuapp.com');
+  // var socket = io.connect('http://localhost:5000');
   socket.emit('new_connection', {
     'username': $scope.username
   });
@@ -331,7 +332,7 @@ socket.on('time_up', (data) => {
   clearInterval(x);
   $("#timer").css("display", "none");
   document.getElementById("timer").innerHTML = "Time reamining : 2m 00s";
-  
+
   //Disable the chat box
   $("#chat-text").attr("disabled", true);
   $(".send-button").css("background-color", "grey");
