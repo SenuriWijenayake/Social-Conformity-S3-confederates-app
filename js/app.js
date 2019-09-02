@@ -98,7 +98,6 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
 
   //Function to get timestamp
   $scope.getTimestamp = function() {
-    // return new Date().toUTCString();
     var dt = new Date();
     dt.setHours(dt.getHours() + 10);
     return dt.toUTCString();
