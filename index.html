@@ -42,14 +42,32 @@
               </tr>
 
               <tr class="row" ng-show="user.cues == 'avatar'">
-                <td class="col-sm-6 right padding-adjust-labels" style="padding-top:25px;"> Your name: <span style="color:red;">*</span></td>
-                <td class="col-sm-6" style="padding-top: 25px;"> <input type="text" placeholder=" e.g. User 1, User 2 etc." ng-model="user.username" class="input-text" style="padding-left:5px;"></td>
+                <td class="col-sm-6 right padding-adjust-labels" style="padding-top:10px;"> Your name: <span style="color:red;">*</span></td>
+                <td class="col-sm-6" style="padding-top: 10px;">
+                  <select required ng-model="user.username" class="input-text">
+                    <option value="">None</option>
+                    <option value="User 1">User 1</option>
+                    <option value="User 2">User 2</option>
+                    <option value="User 4">User 4</option>
+                    <option value="User 5">User 5</option>
+                  </select>
+                </td>
+                <!-- <td class="col-sm-6" style="padding-top: 25px;"> <input type="text" placeholder=" e.g. User 1, User 2 etc." ng-model="user.username" class="input-text" style="padding-left:5px;"></td> -->
               </tr>
 
               <!--For cues condition-->
               <tr class="row" ng-show="user.cues == 'letter'">
-                <td class="col-sm-6 right padding-adjust-labels" style="padding-top:25px;"> Your name: <span style="color:red;">*</span></td>
-                <td class="col-sm-6" style="padding-top: 25px;"> <input type="text" placeholder=" e.g. JG, NB, DH or BS" ng-model="user.username" class="input-text" style="padding-left:5px;"></td>
+                <td class="col-sm-6 right padding-adjust-labels" style="padding-top:10px;"> Your name: <span style="color:red;">*</span></td>
+                <td class="col-sm-6" style="padding-top: 10px;">
+                  <select required ng-model="user.username" class="input-text">
+                    <option value="">None</option>
+                    <option value="JG">JG</option>
+                    <option value="NB">NB</option>
+                    <option value="DH">DH</option>
+                    <option value="BS">BS</option>
+                  </select>
+                </td>
+                <!-- <td class="col-sm-6" style="padding-top: 25px;"> <input type="text" placeholder=" e.g. JG, NB, DH or BS" ng-model="user.username" class="input-text" style="padding-left:5px;"></td> -->
               </tr>
 
             </table>
