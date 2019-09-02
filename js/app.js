@@ -108,10 +108,12 @@ app.controller('QuizController', function($scope, $http, $window, $timeout) {
   $scope.history = [];
   var socket = io.connect('https://mysterious-badlands-68636.herokuapp.com');
   // var socket = io.connect('http://localhost:5000');
-  socket.emit('new_connection', {
-    'username': $scope.username
-  });
-
+  if ($scope.username != null){
+    socket.emit('new_connection', {
+      'username': $scope.username
+    });
+  }
+  
   //Sending the initial messages
   $timeout(function() {
     $scope.history.push({
